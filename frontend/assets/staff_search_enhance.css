@@ -1,0 +1,217 @@
+@charset "UTF-8";
+
+.ao-title-tree div{
+    border-bottom: 1px dotted #d0d0d0;
+    text-indent: -18px;
+    margin-left: 20px;
+    padding: 0 0 3px 0;
+}
+.ao-title-tree .ao-title-level{
+    font-weight: 200;
+}
+.ao-title-tree div:last-of-type{
+    border-bottom: none;
+    font-weight: 500;
+}
+.ao-title-tree div::before{
+    content: "\21B3\0020";
+    font-weight: 100;
+}
+.ao-title-tree div:nth-of-type(1)::before{
+    font-size: 80%;
+    margin-right: 5px;
+    font-family: "Glyphicons Halflings";
+    content: "\E032";
+}
+.ao-title-tree div:nth-of-type(1){
+    margin-left: 0;
+    text-indent: 0;
+}
+.ao-title-tree div:nth-of-type(2){
+    margin-left: 20px;
+}
+.ao-title-tree div:nth-of-type(3){
+    margin-left: 40px;
+}
+.ao-title-tree div:nth-of-type(4){
+    margin-left: 60px;
+}
+.ao-title-tree div:nth-of-type(5){
+    margin-left: 80px;
+}
+.ao-title-tree div:nth-of-type(6){
+    margin-left: 100px
+}
+.facet-toggle .fewer-facets{
+    display: none;
+}
+.search-results-filters{
+    /*float:right !important;*/
+}
+#listed-search-results{
+    margin: 40px 0 20px 0;
+    border-top: 1px solid #eee;
+}
+.search-list-record-actions > div{
+    max-width: 85%;
+}
+.search-results-result{
+    border-bottom: 1px solid #eee;
+    clear: left;
+    display: block;
+    padding: 10px;
+    position: relative;
+}
+.search-results-result:nth-of-type(2n){
+    background-color: #e7e7e7;
+}
+.search-results-result:nth-of-type(2n) > .search-result-location-wrapper, .search-results-result:nth-of-type(2n) .no-locations{
+    background-color: #fbfbfb;
+}
+.search-results-result .resource-id-title{
+    display: none;
+}
+.search-result-record-type{
+    float: left;
+    margin: 3px 5px 0 0;
+}
+.search-result-object-title{
+    font-size: 125%;
+    text-decoration: underline;
+}
+.search-result-label-warning{
+    color: #000;
+    display: inline-block;
+    font-size: 115%;
+    margin: 5px 0;
+    width: 100%;
+}
+.search-results-result .label-primary-case{
+    background-color: #fdfdfd;
+    border: 1px solid #ddd;
+    font-size: 90%;
+}
+.search-results-result div.restrictions-apply-flag{
+    position: absolute;
+    left: -100000px;
+}
+.search-result-record-type{
+    color: #000;
+}
+.search-result-record-type:before{
+    font-size: 85%;
+    font-family: "Glyphicons Halflings";
+}
+.search-result-record-type.search-result-primary-type-family,
+.search-result-record-type.search-result-primary-type-person,
+.search-result-record-type.search-result-primary-type-corporate-entity{
+    background-color: #FAEBD7;
+}
+.search-result-record-type.search-result-primary-type-resource{
+    background-color: #7FFFD4;
+}
+.search-result-record-type.search-result-primary-type-accession{
+    background-color: #87ccfe;
+}
+.search-result-record-type.search-result-primary-type-series{
+    background-color: #FFC0CB;
+}
+.search-result-record-type.search-result-primary-type-box{
+    background-color: #B0C4DE;
+}
+.search-result-record-type.search-result-primary-type-file{
+    background-color: #d5eb99;
+}
+.search-result-record-type.search-result-primary-type-item{
+    background-color: #DDA0DD;
+}
+.search-result-record-type.search-result-primary-type-family::before{
+    content: "\E008\E008";
+}
+.search-result-record-type.search-result-primary-type-person::before{
+    content: "\E008";
+}
+.search-result-record-type.search-result-primary-type-resource::before{
+    content: "\E032";
+}
+.search-result-record-type.search-result-primary-type-accession::before{
+    content: "\E102"
+}
+.search-result-record-type.search-result-primary-type-top-container::before{
+    content: "\E139"
+}
+.search-result-record-type.search-result-primary-type-onbase-document::before{
+    content: "\E172"
+}
+.search-result-record-type.search-result-primary-type-collection-management::before{
+    content: "\E139"
+}
+.search-result-record-type.search-result-primary-type-event::before{
+    content: "\E109"
+}
+.search-result-record-type.search-result-primary-type-location::before{
+    content: "\E062";
+}
+.search-result-record-type.search-result-primary-type-corporate-entity::before{
+    content: "\E135";
+}
+.search-result-record-type.search-result-primary-type-series:before,
+.search-result-record-type.search-result-primary-type-box:before,
+.search-result-record-type.search-result-primary-type-file:before,
+.search-result-record-type.search-result-primary-type-item::before{
+    content: "\E118"
+}
+.search-result-location-wrapper, .no-locations{
+    background-color: #eee; /*#dff0d8;*/
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 110%;
+    margin: 5px auto;
+    text-align: center;
+}
+.search-result-location-wrapper span{
+    font-weight: 300;
+}
+.search-result-location-wrapper .location-string{
+    display: block;
+}
+.search-result-record-label,
+.search-result-location-wrapper .search-result-record-label{
+    font-weight: 500;
+    margin-right: 5px;
+}
+#listed-search-results .search-result-context-wrapper .ao-title-tree{
+    background-color: transparent;
+    border: none;
+    border-radius: 0;
+    margin: 0;
+    max-width: 90%;
+    font-size: 90%;
+    display: inline-table;
+    padding: 0;
+}
+.multiselect-column{
+    float: left;
+    margin-right: 10px;
+}
+#listed-search-results .search-list-record-actions .btn.btn-xs.btn-primary{
+    margin-top: -3px;
+}
+/* Scope and Content styling */
+.scopecontent-content{
+    display: inline-table;
+    line-height: 145%;
+    width: 80%;
+}
+.scopecontent-more-control,
+.scopecontent-less-control{
+    cursor: pointer;
+    margin-left: 5px;
+}
+.scopecontent-content .glyphicon{
+    margin-right: 3px;
+    font-size: 90%;
+}
+.scopecontent-more{
+    display: none;
+}

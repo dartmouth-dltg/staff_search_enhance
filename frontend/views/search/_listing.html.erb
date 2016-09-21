@@ -1,0 +1,149 @@
+<% if @search_data.results? %>
+  <% add_identifier_column if show_identifier_column? %>
+  <%= render_aspace_partial :partial => "shared/pagination_summary" %>
+  <% location_type = ["accession","resource","box","file","item"] %>
+  <div id="listed-search-results">
+    <% @search_data['results'].each do |result|
+      result_json = ASUtils.json_parse(result['json'])
+      deleted = (params.has_key?("deleted_uri") and Array(params["deleted_uri"]).include?(result["id"])) || false
+    %>
+      <div class="search-results-result" data-uri="<%= result["id"] %>" data-record-type="<%= result["primary_type"] %>" class="<%= "deleted" if deleted %>" data-has-children="<%= result["id"] %>">
+        <% if allow_multi_select? %>
+          <span class="multiselect-column">
+            <%= check_box_tag "multiselect-item", result["id"], false %>
+          </span>
+        <% end %>
+        <% if params[:linker] === 'true' %>
+          <% if params[:multiplicity] === 'many' %>
+            <span>
+              <%= check_box_tag "linker-item", result["id"], false, :"data-object" => result.to_json %>
+            </span>
+          <% else %>
+            <span>
+              <%= radio_button_tag "linker-item", result["id"], false, :"data-object" => result.to_json %>
+            </span>
+          <% end %>
+        <% end %>
+
+        <div class="search-title-column">
+          <% if result['primary_type'] === "repository" and session[:repo] === result['id'] %><span class="label label-success"><%= I18n.t("repository._frontend.messages.selected_short") %></span><% end %>
+          <% if result["suppressed"] %><span class="label label-info"><%= I18n.t("states.suppressed") %></span><% end %>
+          <% if deleted %><span class="label label-important"><%= I18n.t("states.deleted") %></span><% end %>
+
+          <% if !params[:linker] || params[:linker] === 'false' %>
+            <div class="search-list-record-actions">
+              <% if not deleted %>
+                <div>
+                  <% primary_type = I18n.t("#{result["primary_type"]}._singular", :default => I18n.t("plugins.#{result["primary_type"]}._singular"))
+                    if result['primary_type'] == 'archival_object'
+                      primary_type = result['level'] == "otherlevel" ? result['other_level'] : result['level']  
+                    end 
+                    primary_type_class = primary_type.downcase.gsub(/\s/,"-") || primary_type.downcase
+                  %>
+                  <div class="search-result-record-type label label-primary-case search-result-primary-type-<%= primary_type_class %>">
+                    <span class="search-record-type">
+                      <%= primary_type.titlecase %>
+                    </span>
+                  </div>
+                  <% title = clean_mixed_content(result["title"]).html_safe || clean_mixed_content(result['display_string']).html_safe %>
+                  <%= link_to title, {:controller => :resolver, :action => :resolve_readonly, :uri => result["id"]}, :class => "search-result-object-title" %>
+                  <% if can_edit_search_result?(result) %>
+                    <%= link_to I18n.t("actions.edit"), {:controller => :resolver, :action => :resolve_edit, :uri => result["id"]}, :class => "btn btn-xs btn-primary" %>
+                  <% end %>
+                </div>
+                <% if result['primary_type'] === "repository" and @repositories.any?{|r| r['uri'] === result['id']} %>
+                  <% if current_repo['uri'] != result['id'] %>
+                    <%= form_tag({:action => :select, :id => JSONModel(:repository).id_for(result['id'])}, {:style => "display: inline;"}) do |f| %>
+                      <button type="submit" class="btn btn-xs btn-success"><%= I18n.t("repository._frontend.action.select") %></button>
+                    <% end %>
+                  <% end %>
+                <% end %>
+              <% end %>
+            </div>
+            <% if result['total_restrictions_u_sbool'] %>
+              <% result['total_restrictions_u_sbool'].each do |restriction| %>
+                <% if restriction === true %>
+                  <span class="label label-warning search-result-label-warning"><%= I18n.t("search_results.states.restricted", :restrictions_level => "#{result['restrictions_level_u_sstr'].join("")}") %></span>
+                <% end %>
+              <% end %>
+            <% end %>
+          <% end %>
+        </div>
+        
+        <% if extra_columns? %>
+          <% extra_columns.each do |col| %>
+            <% unless col.value_for(result).nil? || col.value_for(result).empty? %>
+              <div class="extra-column-data">
+                <span class="search-result-record-label"><%= col.label rescue "" %>:</span>
+                <span class="<%= col.label.downcase rescue "" %>" data-<%= col.label.downcase rescue "" %>="<%= col.value_for(result).downcase rescue "" %>"><%= col.value_for(result) %></span>
+              </div>
+            <% end %>
+          <% end %>
+        <% end %>
+
+        <% if result_json.has_key?('notes') && result_json['notes'].is_a?(Array)
+          notes = result_json['notes']
+          scopecontent = notes.find{|note| note['type'] == 'scopecontent'} %>
+          <% if scopecontent %>
+            <% scopecontent_content = scopecontent['subnotes'].map {|sn| sn['content']}.join("<br />") %>
+            <div class="search-result-scopecontent">
+              <span class="search-result-record-label">Scope &amp; Content:</span><span class="scopecontent-content">
+              <% if scopecontent_content.length > 150 %>
+                <%= scopecontent_content[0..149] %><span class="scopecontent-ellipse">...</span><span class="scopecontent-more-control btn btn-xs btn-default"><span class="glyphicon glyphicon-plus"></span>More</span><span class="scopecontent-more"><%= scopecontent_content[150..-1] %>
+                <span class="scopecontent-less-control btn btn-xs btn-default"><span class="glyphicon glyphicon-minus"></span>Less</span>
+              <% else %>
+                <%= scopecontent_content %>
+              <% end %>
+              </span>
+            </div>
+          <% end %>
+        <% end %> 
+        <% if result['primary_type'] == "archival_object" %>
+          <div class="search-result-context-wrapper"><span class="search-result-record-label"><%= I18n.t("search_results.context") %></span>
+            <% if result['context_u_sstr'].length > 0 %>
+              <% result['context_u_sstr'].each do |context| %>
+                <% context_hash = ASUtils.json_parse(context) %>
+                <div class="ao-title-tree">
+                  <% context_hash.each do |k,v| %>
+                    <div>
+                      <span class="ao-title-level"><%= "#{k.capitalize}" %>:</span> <%= v %>
+                    </div>
+                  <% end %>
+                </div>
+              <% end %>
+            <% end %>
+          </div>
+        <% end %>
+        <% if location_type.include?(primary_type_class) %>
+          <% if result['location_u_sstr'].nil? %>
+            <% unless result['primary_type'] == "resource" %>
+              <div class="no-locations"><%= I18n.t("search_results.no_location") %></div>
+            <% end %>
+          <% else %>
+            <div class="search-result-location-wrapper"><span class="search-result-record-label"><%= I18n.t("search_results.location") %></span>
+              <% result['location_u_sstr'].each do |location| %>
+                <% if location.length > 0 %>
+                  <% ASUtils.json_parse(location)['containers'].each do |container| %>
+                    <% container.each_with_index.map do |hash, index| %>
+                      <% hash.each do |k,v| %>
+                        <span class="location-delimiter"><%= "#{k.titlecase}" %>: <%= v %><%= index != container.length - 1 ? ", " : "" %></span>
+                      <% end %>
+                    <% end %>
+                  <% end %>
+                  <span class="location-string">
+                    <%= ASUtils.json_parse(location)['location'] ? ASUtils.json_parse(location)['location'] : I18n.t("search_results.no_physical_location") %>
+                  </span>
+                <% end %>
+              <% end %>
+            </div>
+          <% end %>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+  <%= render_aspace_partial :partial => "shared/pagination" %>
+<% else %>
+  <p class="alert alert-info">
+    <%= I18n.t("search_results.no_results") %>
+  </p>
+<% end %>

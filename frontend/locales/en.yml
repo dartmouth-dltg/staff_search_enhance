@@ -1,0 +1,15 @@
+en:
+  search_results:
+    context: "Context:"
+    filter:
+      resource_identifier_u_sstr: Call Number
+      resource_identifier_w_title_u_sstr: Call Number & Title
+    location: "Location:"
+    states:
+      restricted: Restrictions may apply at the %{restrictions_level} level.
+    no_location: No containers or locations found.
+    no_physical_location: No location found.
+  search_sorting:
+    resource_identifier_u_sort: Resource
+    resource_type_u_sort: Collection Type
+ 
