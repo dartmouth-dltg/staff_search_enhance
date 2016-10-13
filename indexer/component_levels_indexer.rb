@@ -1,9 +1,7 @@
-require 'aspace_logger'
 class StaffSearchIndexer < CommonIndexer
   include JSONModel
   #add_attribute_to_resolve('resource')
   add_indexer_initialize_hook do |indexer|
-    logger=Logger.new($stderr)
     indexer.add_document_prepare_hook {|doc, record|
       if record['record']['jsonmodel_type'] == 'archival_object'
         
@@ -100,7 +98,6 @@ class StaffSearchIndexer < CommonIndexer
   end
   
   def self.location_finder(instance_json)
-    logger = Logger.new($stderr)
     location = instance_json.
               collect{|instance| instance["container"]}.compact.
               collect{|container| container["container_locations"]}.flatten.
@@ -113,7 +110,6 @@ class StaffSearchIndexer < CommonIndexer
                       Hash[container['type_'+i.to_s] => container['indicator_'+i.to_s]]
                     end
               }.compact}.compact
-    logger.debug("containers: #{containers.inspect}")
     
     location_and_container = ASUtils.to_json(Hash[:location => location, :containers => containers])
 
